@@ -1,7 +1,7 @@
 ---
 name: beancount-review
 description: Beancount ledger review — detect accounting errors, analyze income/expenses by period, and generate advisory reports
-compatibility: [claude-code]
+compatibility: [claude-code, pi-agent]
 tools: [bash, read, filesystem]
 ---
 
@@ -69,9 +69,29 @@ Additionally, check for common issues:
 - Transactions with missing or zero amounts
 - Commodity imbalance within a transaction (`Assets:A 100 USD` but `Expenses:B 100 EUR`)
 
-### Step 3 — Income & Expense Analysis
+### Step 3 — Determine Analysis Period
 
-Determine the date range from `--period` and `--compare`:
+**Default behavior**: analyze the **last completed period**, not the current partial one.
+
+1. Get today's date
+2. Determine the target period (based on `--period`):
+
+| `--period` | Default analysis range | Example (today = July 4, 2026) |
+| ---------- | ---------------------- | ------------------------------ |
+| `month`    | Last complete month    | June 1 – June 30, 2026         |
+| `quarter`  | Last complete quarter  | April 1 – June 30, 2026 (Q2)   |
+| `year`     | Last complete year     | Jan 1 – Dec 31, 2025           |
+
+3. Determine the comparison baseline (based on `--compare`):
+
+| `--compare`          | Baseline                    | Example (target = June 2026) |
+| -------------------- | --------------------------- | ---------------------------- |
+| `previous` (default) | Prior period of same length | May 2026                     |
+| `last-year`          | Same period, prior year     | June 2025                    |
+
+### Step 4 — Income & Expense Analysis
+
+Query the beancount ledger using the date ranges determined in Step 3:
 
 ```bash
 # Current period income
@@ -106,7 +126,7 @@ Flag anomalies:
 - Income decline > 10%
 - Savings rate < 10%
 
-### Step 4 — Advisory Report
+### Step 5 — Advisory Report
 
 Generate a structured report.
 

@@ -42,6 +42,41 @@ targets: [claude-code, pi-agent]
 - Agent-specific logic lives in `shared/helpers/<agent-name>.ts`
 - Scripts read from `skills/registry.json` — do NOT scan directories
 
+## Git Conventions
+
+### Commit Message Format
+
+Every commit message must use one of the following prefixes:
+
+| Prefix | When to use |
+|--------|-------------|
+| `feat:` | New skill or new feature for an existing skill |
+| `fix:` | Bug fix, typo correction, or behavior correction |
+| `docs:` | Documentation-only changes (README, AGENTS.md, drafts) |
+| `refactor:` | Code restructuring with no behavior change |
+| `test:` | Adding or updating tests |
+| `chore:` | Tooling, config, dependencies, CI, formatting |
+| `style:` | Code style / formatting only (Prettier, ESLint) |
+
+Examples:
+
+```
+feat: add beancount-review skill with income/expense analysis
+fix: correct default conda env name from beancount to pymain
+docs: add README for code-review skill
+chore: pin pnpm version and clean up CI config
+refactor: extract shared CLI arg parsing into args.ts
+```
+
+### Scope (optional)
+
+For changes specific to one skill, append the skill name as a scope:
+
+```
+feat(beancount-review): add Spending Structure analysis section
+fix(code-review): correct naming issues detection regex
+```
+
 ## Documentation
 
 - `docs/init-draft.md` — requirements and implementation plan (Chinese)
