@@ -1,0 +1,11 @@
+{
+  "skills": [
+    {
+      "name": "code-review",
+      "description": "Review code changes for bugs, security, and quality — also serves as a skill template",
+      "version": "0.1.0",
+      "targets": ["claude-code", "pi-agent"],
+      "path": "skills/code-review/skill.md"
+    }
+  ]
+}

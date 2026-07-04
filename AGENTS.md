@@ -1,0 +1,74 @@
+# AGENTS.md — Mung Project Instructions
+
+## Project Identity
+
+**mung** is a personal AI Skills management repository. It is NOT a standard code project — it's a toolbox for managing, distributing, and installing AI agent skills across Claude Code and Pi Agent.
+
+## Skill Development Conventions
+
+### Adding a New Skill
+
+1. Create `skills/<skill-name>/skill.md` with the required frontmatter
+2. Register it in `skills/registry.json`
+3. Test installation: `npx tsx shared/install.ts --skill <name> --target claude-code --scope global`
+4. Clean up: `npx tsx shared/uninstall.ts --skill <name> --target claude-code --scope global`
+
+### Skill Directory Structure
+
+Each skill in `skills/<name>/` must have a `skill.md`:
+
+```markdown
+---
+name: <skill-name>
+description: <one-line description>
+type: prompt | script
+targets: [claude-code, pi-agent]
+---
+
+<skill content — prompt text or script instructions>
+```
+
+### Naming Conventions
+
+- Directory names: kebab-case (e.g., `code-review`)
+- Skill names: match directory name
+- Use English for all skills and code; `*.draft.md` and locale-specific skills may use other languages
+
+## Script Conventions
+
+- Package manager: `pnpm` (dependency management)
+- All `shared/` scripts are TypeScript, run with `npx tsx`
+- Entry points: `install.ts`, `uninstall.ts`, `list.ts`
+- Agent-specific logic lives in `shared/helpers/<agent-name>.ts`
+- Scripts read from `skills/registry.json` — do NOT scan directories
+
+## Documentation
+
+- `docs/init-draft.md` — requirements and implementation plan (Chinese)
+- `docs/design.md` — architecture, spec, and interface design (English)
+
+## Common Operations
+
+### List available skills
+
+```bash
+npx tsx shared/list.ts
+```
+
+### Install a skill globally for Claude Code
+
+```bash
+npx tsx shared/install.ts --skill code-review --target claude-code --scope global
+```
+
+### Uninstall a skill
+
+```bash
+npx tsx shared/uninstall.ts --skill code-review --target claude-code --scope global
+```
+
+### Install all skills to a project
+
+```bash
+npx tsx shared/install.ts --all --target claude-code --scope project --project-path /path/to/project
+```

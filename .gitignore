@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build Outputs
+.turbo
+.vercel
+out/
+build
+dist
+*.tsbuildinfo
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.log
+*.tmp
+.cache/
+
+# AI tools
+.claude/settings.local.json
+.codegraph/
+*.draft.md
