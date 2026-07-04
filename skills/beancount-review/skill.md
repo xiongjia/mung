@@ -15,12 +15,12 @@ You are a certified accountant reviewing a beancount ledger. Be thorough and pre
 /beancount-review [--period month|quarter|year] [--compare previous|last-year] [--file <path>] [--conda-env <name>]
 ```
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--period` | `month` | Analysis period: `month`, `quarter`, or `year` |
-| `--compare` | `previous` | Baseline: `previous` (prior period) or `last-year` (same period last year) |
-| `--file` | auto-detect | Path to the main beancount file |
-| `--conda-env` | `beancount` | Name of the conda environment with beancount installed |
+| Option        | Default     | Description                                                                |
+| ------------- | ----------- | -------------------------------------------------------------------------- |
+| `--period`    | `month`     | Analysis period: `month`, `quarter`, or `year`                             |
+| `--compare`   | `previous`  | Baseline: `previous` (prior period) or `last-year` (same period last year) |
+| `--file`      | auto-detect | Path to the main beancount file                                            |
+| `--conda-env` | `beancount` | Name of the conda environment with beancount installed                     |
 
 ## Configuration Discovery
 
@@ -62,6 +62,7 @@ Run `bean-check` on the main file. Parse the output and categorize:
 - **🟡 Warnings**: accounts without `open` directive, unused accounts, suspicious patterns
 
 Additionally, check for common issues:
+
 - Duplicate transactions (same date, amount, and payee)
 - Accounts with negative balances that should not be negative (e.g., `Assets:Cash`)
 - Transactions with missing or zero amounts
@@ -89,16 +90,17 @@ conda run -n <env> bean-query <main_file> "
 
 Calculate key metrics:
 
-| Metric | Formula |
-|--------|---------|
-| Total Income | Σ Income accounts |
-| Total Expenses | Σ Expense accounts |
-| Net Savings | Income − Expenses |
-| Savings Rate | Net Savings ÷ Income × 100% |
-| Top Expense Categories | Top 5 by absolute value |
+| Metric                 | Formula                                |
+| ---------------------- | -------------------------------------- |
+| Total Income           | Σ Income accounts                      |
+| Total Expenses         | Σ Expense accounts                     |
+| Net Savings            | Income − Expenses                      |
+| Savings Rate           | Net Savings ÷ Income × 100%            |
+| Top Expense Categories | Top 5 by absolute value                |
 | MoM / QoQ / YoY Change | (Current − Previous) ÷ Previous × 100% |
 
 Flag anomalies:
+
 - Any expense category with > 30% increase vs baseline
 - Income decline > 10%
 - Savings rate < 10%
@@ -120,14 +122,16 @@ Generate a structured report.
 ## 🔍 Error Check
 
 ### Errors (🔴)
+
 | Line | File | Issue |
-|------|------|-------|
+| ---- | ---- | ----- |
 
 ### Warnings (🟡)
-| Line | File | Issue |
-|------|------|-------|
 
-*No errors found.* ← if applicable
+| Line | File | Issue |
+| ---- | ---- | ----- |
+
+_No errors found._ ← if applicable
 
 ---
 
@@ -135,22 +139,22 @@ Generate a structured report.
 
 ### Summary
 
-| Metric | Current | Previous | Change |
-|--------|---------|----------|--------|
-| Total Income | ¥XXX | ¥XXX | +X% |
-| Total Expenses | ¥XXX | ¥XXX | +X% |
-| Net Savings | ¥XXX | ¥XXX | +X% |
-| Savings Rate | XX% | XX% | — |
+| Metric         | Current | Previous | Change |
+| -------------- | ------- | -------- | ------ |
+| Total Income   | ¥XXX    | ¥XXX     | +X%    |
+| Total Expenses | ¥XXX    | ¥XXX     | +X%    |
+| Net Savings    | ¥XXX    | ¥XXX     | +X%    |
+| Savings Rate   | XX%     | XX%      | —      |
 
 ### Top Expense Categories
 
 | Category | Amount | % of Total | vs Baseline |
-|----------|--------|------------|-------------|
+| -------- | ------ | ---------- | ----------- |
 
 ### Income Breakdown
 
 | Source | Amount | % of Total |
-|--------|--------|------------|
+| ------ | ------ | ---------- |
 
 ---
 

@@ -4,12 +4,12 @@ AI-powered beancount ledger review — detect accounting errors, analyze income/
 
 ## Files
 
-| File / Dir       | Purpose                                               |
-| ---------------- | ----------------------------------------------------- |
-| `skill.md`       | Skill content installed to Claude Code as a prompt.   |
-| `README.md`      | This file — developer/user documentation.             |
-| `scripts/`       | Optional helper scripts for beancount operations.     |
-| `references/`    | Optional reference materials (cheatsheets, etc.).     |
+| File / Dir    | Purpose                                             |
+| ------------- | --------------------------------------------------- |
+| `skill.md`    | Skill content installed to Claude Code as a prompt. |
+| `README.md`   | This file — developer/user documentation.           |
+| `scripts/`    | Optional helper scripts for beancount operations.   |
+| `references/` | Optional reference materials (cheatsheets, etc.).   |
 
 ## Prerequisites
 
