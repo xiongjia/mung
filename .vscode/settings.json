@@ -1,0 +1,35 @@
+{
+  // Format on save
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+
+  // Use Prettier as default formatter
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Per-language formatters
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ESLint for TypeScript
+  "eslint.enable": true,
+  "eslint.validate": ["typescript"],
+
+  // Use local TypeScript version
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
