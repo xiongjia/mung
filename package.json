@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Personal AI Skills manager — install, manage, and distribute AI agent skills",
+  "packageManager": "pnpm@11.4.0",
   "scripts": {
     "add": "npx tsx shared/install.ts",
     "remove": "npx tsx shared/uninstall.ts",
