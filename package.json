@@ -1,0 +1,30 @@
+{
+  "name": "mung",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal AI Skills manager — install, manage, and distribute AI agent skills",
+  "packageManager": "pnpm@11.4.0",
+  "scripts": {
+    "add": "npx tsx shared/install.ts",
+    "remove": "npx tsx shared/uninstall.ts",
+    "list": "npx tsx shared/list.ts",
+    "lint": "eslint shared/",
+    "lint:fix": "eslint --fix shared/",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "pnpm format:check && pnpm lint && pnpm test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.62.1",
+    "@typescript-eslint/parser": "^8.62.1",
+    "eslint": "^10.6.0",
+    "prettier": "^3.9.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.9"
+  }
+}
