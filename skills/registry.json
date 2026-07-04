@@ -6,6 +6,13 @@
       "version": "0.1.0",
       "targets": ["claude-code", "pi-agent"],
       "path": "skills/code-review/skill.md"
+    },
+    {
+      "name": "beancount-review",
+      "description": "Beancount ledger review — detect errors, analyze income/expenses, advisory reports",
+      "version": "0.1.0",
+      "targets": ["claude-code"],
+      "path": "skills/beancount-review/skill.md"
     }
   ]
 }
