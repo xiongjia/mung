@@ -52,7 +52,6 @@ mung/
 │       ├── claude-code.ts        # Claude Code (~/.claude/skills/<name>.md)
 │       └── pi-agent.ts           # Pi Agent (~/.pi/agent/skills/<name>/SKILL.md)
 ├── docs/
-│   ├── init-draft.md             # Requirements & implementation plan (Chinese)
 │   └── design.md                 # Architecture, spec, and interface design
 ├── .github/workflows/
 │   └── ci.yml                    # GitHub Actions: format check, lint, test
@@ -82,9 +81,7 @@ mung/
 
 ## Documentation
 
-- [AGENTS.md](AGENTS.md) — Project instructions for AI agents (Claude Code, Pi Agent)
-- [docs/init-draft.md](docs/init-draft.md) — Requirements & implementation plan (Chinese)
-- [docs/design.md](docs/design.md) — Architecture design (English)
+- [docs/design.md](docs/design.md) — Architecture design
 
 ## License
 

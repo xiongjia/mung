@@ -32,7 +32,7 @@ targets: [claude-code, pi-agent]
 
 - Directory names: kebab-case (e.g., `code-review`)
 - Skill names: match directory name
-- Use English for all skills and code; `*.draft.md` and locale-specific skills may use other languages
+- Use English for all skills and code; locale-specific skills may use other languages
 
 ## Script Conventions
 
@@ -79,8 +79,7 @@ fix(code-review): correct naming issues detection regex
 
 ## Documentation
 
-- `docs/init-draft.md` — requirements and implementation plan (Chinese)
-- `docs/design.md` — architecture, spec, and interface design (English)
+- `docs/design.md` — architecture, spec, and interface design
 
 ## Common Operations
 

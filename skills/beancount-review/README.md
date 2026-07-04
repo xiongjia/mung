@@ -95,11 +95,11 @@ No errors found.
 | Savings Rate | 35.7% | 37.5% | −1.8pp |
 
 ## ⚠️ Anomalies
-- **Expenses:餐饮**: +35% vs baseline — consider review
-- **Expenses:购物**: +28% — approaching threshold
+- **Expenses:Dining**: +35% vs baseline — consider review
+- **Expenses:Shopping**: +28% — approaching threshold
 
 ## 💡 Recommendations
-1. 餐饮 spending increased 35%, set monthly budget cap
+1. Dining spending increased 35%, set monthly budget cap
 2. Savings rate remains healthy at 35.7%
 ```
 
