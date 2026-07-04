@@ -30,6 +30,6 @@
   "eslint.enable": true,
   "eslint.validate": ["typescript"],
 
-  // Use local TypeScript version
+  // Use local TypeScript version (requires pnpm install first)
   "typescript.tsdk": "node_modules/typescript/lib"
 }

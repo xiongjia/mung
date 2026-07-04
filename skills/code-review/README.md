@@ -8,10 +8,10 @@ When invoked, this skill instructs the AI agent to act as a senior staff enginee
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `skill.md` | Skill content installed to agent (Claude Code / Pi Agent). This is the prompt the agent reads. |
-| `README.md` | This file — developer documentation for the skill itself. |
+| File        | Purpose                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| `skill.md`  | Skill content installed to agent (Claude Code / Pi Agent). This is the prompt the agent reads. |
+| `README.md` | This file — developer documentation for the skill itself.                                      |
 
 ## Usage
 
