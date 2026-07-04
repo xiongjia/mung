@@ -48,15 +48,15 @@ targets: [claude-code, pi-agent]
 
 Every commit message must use one of the following prefixes:
 
-| Prefix | When to use |
-|--------|-------------|
-| `feat:` | New skill or new feature for an existing skill |
-| `fix:` | Bug fix, typo correction, or behavior correction |
-| `docs:` | Documentation-only changes (README, AGENTS.md, drafts) |
-| `refactor:` | Code restructuring with no behavior change |
-| `test:` | Adding or updating tests |
-| `chore:` | Tooling, config, dependencies, CI, formatting |
-| `style:` | Code style / formatting only (Prettier, ESLint) |
+| Prefix      | When to use                                            |
+| ----------- | ------------------------------------------------------ |
+| `feat:`     | New skill or new feature for an existing skill         |
+| `fix:`      | Bug fix, typo correction, or behavior correction       |
+| `docs:`     | Documentation-only changes (README, AGENTS.md, drafts) |
+| `refactor:` | Code restructuring with no behavior change             |
+| `test:`     | Adding or updating tests                               |
+| `chore:`    | Tooling, config, dependencies, CI, formatting          |
+| `style:`    | Code style / formatting only (Prettier, ESLint)        |
 
 Examples:
 
