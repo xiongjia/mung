@@ -20,7 +20,7 @@ You are a certified accountant reviewing a beancount ledger. Be thorough and pre
 | `--period`    | `month`     | Analysis period: `month`, `quarter`, or `year`                             |
 | `--compare`   | `previous`  | Baseline: `previous` (prior period) or `last-year` (same period last year) |
 | `--file`      | auto-detect | Path to the main beancount file                                            |
-| `--conda-env` | `beancount` | Name of the conda environment with beancount installed                     |
+| `--conda-env` | `pymain`    | Name of the conda environment with beancount installed                     |
 
 ## Configuration Discovery
 
@@ -31,7 +31,7 @@ You are a certified accountant reviewing a beancount ledger. Be thorough and pre
 ```json
 {
   "main_file": "main.bean",
-  "conda_env": "beancount"
+  "conda_env": "pymain"
 }
 ```
 
@@ -49,9 +49,10 @@ conda run -n <env> bean-report <main_file> <report>
 
 ### Step 1 — Discover files
 
-- If `--file` is given, use that path
-- Otherwise, scan the project root for `*.bean` files
-- Check `.beancount-config` for `main_file`
+- The beancount ledger is in **the project root directory** (where this skill is installed)
+- If `--file` is given, use that path (relative to project root or absolute)
+- Otherwise, scan the project root for `*.bean` files and use the first one found
+- Check `.beancount-config` for `main_file` (relative to project root)
 - The main file typically includes/imports subsidiary `.bean` files
 
 ### Step 2 — Error Check
@@ -165,10 +166,33 @@ _No errors found._ ← if applicable
 
 ---
 
+## 🏗️ Spending Structure
+
+Analyze the expense composition and identify structural issues:
+
+- **Essential vs Discretionary ratio**: classify expenses and compute the ratio (recommended: essential ≥ 50%)
+- **Category concentration**: flag if a single category exceeds 40% of total spending
+- **Recurring subscriptions**: list recurring items and suggest review for unused services
+- **Seasonal patterns**: note month-over-month trends that may indicate one-time vs recurring spending
+
+## ⚠️ Risk Alerts
+
+Identify financial risks and early warning signs:
+
+- **Savings rate below 10%** for two consecutive periods → financial cushion insufficient
+- **Debt-to-income ratio** trend (if liability accounts exist) → > 40% is risky
+- **Income concentration risk**: single income source > 80% → lack of diversification
+- **Liquidity risk**: `Assets:Cash` balance < 3× monthly expenses → emergency fund low
+- **Expense growth outpaces income growth** for 3+ consecutive periods → unsustainable
+
 ## 💡 Recommendations
 
-1. ...
-2. ...
+Provide specific, actionable advice using concrete metrics from the report:
+
+1. **Spending optimization**: based on top expense categories, suggest targets (e.g., "餐饮 ¥4,500/月 → target ¥3,500, saving ¥1,000/月")
+2. **Emergency fund**: based on monthly expenses, calculate target (3-6× = ¥XX,XXX)
+3. **Budget allocation**: suggest income split (e.g., 50% essentials / 30% discretionary / 20% savings)
+4. **Tax optimization**: mention tax-advantaged accounts or deductions if relevant
 ```
 
 ## Notes

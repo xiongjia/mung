@@ -13,11 +13,11 @@ AI-powered beancount ledger review — detect accounting errors, analyze income/
 
 ## Prerequisites
 
-- **conda** installed and a conda environment with `beancount` configured:
+- **conda** installed and a conda environment with `pymain` configured:
 
   ```bash
-  conda create -n beancount python=3.12
-  conda activate beancount
+  conda create -n pymain python=3.12
+  conda activate pymain
   pip install beancount
   ```
 
@@ -46,7 +46,7 @@ Create `.beancount-config` in your ledger project root:
 Or set an environment variable:
 
 ```bash
-export BEANCOUNT_CONDA_ENV=beancount
+export BEANCOUNT_CONDA_ENV=pymain
 ```
 
 ### 3. Use it
@@ -61,19 +61,19 @@ export BEANCOUNT_CONDA_ENV=beancount
 
 ## Options
 
-| Option        | Default     | Description                                            |
-| ------------- | ----------- | ------------------------------------------------------ |
-| `--period`    | `month`     | Analysis window: `month`, `quarter`, `year`            |
-| `--compare`   | `previous`  | Baseline: `previous` (prior period) or `last-year`     |
-| `--file`      | auto        | Path to main beancount file (auto-detected if omitted) |
-| `--conda-env` | `beancount` | conda environment name                                 |
+| Option        | Default    | Description                                            |
+| ------------- | ---------- | ------------------------------------------------------ |
+| `--period`    | `month`    | Analysis window: `month`, `quarter`, `year`            |
+| `--compare`   | `previous` | Baseline: `previous` (prior period) or `last-year`     |
+| `--file`      | auto       | Path to main beancount file (auto-detected if omitted) |
+| `--conda-env` | `pymain`   | conda environment name                                 |
 
 ## Configuration Priority
 
 1. CLI argument `--conda-env`
 2. Environment variable `BEANCOUNT_CONDA_ENV`
 3. `.beancount-config` file in project root
-4. Default: `beancount`
+4. Default: `pymain`
 
 ## Example Output
 
