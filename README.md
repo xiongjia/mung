@@ -64,6 +64,13 @@ mung/
 └── .prettierrc
 ```
 
+## Skills
+
+| Skill                                                 | Targets               | Description                                                                                               |
+| ----------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
+| [code-review](skills/code-review/README.md)           | Claude Code, Pi Agent | Strict code review on diffs — correctness, security, naming, and project conventions                      |
+| [beancount-review](skills/beancount-review/README.md) | Claude Code, Pi Agent | Beancount ledger review — detect errors, analyze income/expenses by period, and generate advisory reports |
+
 ## Install Targets
 
 | Agent       | Global                               | Project                                |
