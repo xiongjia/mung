@@ -30,10 +30,11 @@ npx tsx shared/uninstall.ts --skill code-review --target claude-code --scope glo
 
 The skill instructs the agent to:
 
-1. Run `git status` and `git diff` to discover all changes
-2. Run `git log origin/main..HEAD` for unpushed commits
-3. Review against a defined set of principles
-4. Report issues in a structured format with severity labels
+1. Run `git status` to show the overall state
+2. Run `git diff HEAD` to discover ALL uncommitted changes (staged + unstaged)
+3. Run `git log origin/main..HEAD` for unpushed commits
+4. Review against a defined set of principles
+5. Report issues in a structured format with severity labels
 
 ## Notes for Developers
 

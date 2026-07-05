@@ -19,6 +19,9 @@ npx tsx shared/uninstall.ts --skill code-review --target claude-code --scope glo
 
 # Install all skills to a project
 npx tsx shared/install.ts --all --target claude-code --scope project --project-path /path/to/project
+
+# Install code-review to current project
+npx tsx shared/install.ts --skill code-review --target claude-code --scope project --project-path .
 ```
 
 ## Commands
@@ -68,7 +71,7 @@ mung/
 
 | Skill                                                 | Targets               | Description                                                                                               |
 | ----------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
-| [code-review](skills/code-review/README.md)           | Claude Code, Pi Agent | Strict code review on diffs — correctness, security, naming, and project conventions                      |
+| [code-review](skills/code-review/README.md)           | Claude Code, Pi Agent | Strict code review on all changes (staged, unstaged, and unpushed commits) — correctness, security, naming, and project conventions |
 | [beancount-review](skills/beancount-review/README.md) | Claude Code, Pi Agent | Beancount ledger review — detect errors, analyze income/expenses by period, and generate advisory reports |
 
 ## Install Targets
