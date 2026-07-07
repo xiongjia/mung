@@ -328,10 +328,10 @@ Provide specific, actionable advice using concrete metrics from the report:
 
 This skill ships with reference files in the `references/` directory:
 
-| File | Purpose |
-|------|---------|
-| `references/syntax.md` | Beancount directive syntax reference with CNY examples |
-| `references/bql.md` | Full BQL query language documentation |
+| File                     | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `references/syntax.md`   | Beancount directive syntax reference with CNY examples                             |
+| `references/bql.md`      | Full BQL query language documentation                                              |
 | `references/examples.md` | Common transaction patterns (CNY adaptation with Chinese banking/wallet scenarios) |
 
 ## Notes

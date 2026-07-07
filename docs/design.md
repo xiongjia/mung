@@ -202,12 +202,12 @@ npx tsx shared/uninstall.ts --skill <name> \
 
 ### Target Paths
 
-| Agent       | Scope   | Path                                   |
-| ----------- | ------- | -------------------------------------- |
-| Claude Code | global  | `~/.claude/skills/<name>/`             |
-| Claude Code | project | `<project>/.claude/skills/<name>/`     |
-| Pi Agent    | global  | `~/.pi/agent/skills/<name>/`           |
-| Pi Agent    | project | `<project>/.pi/skills/<name>/`         |
+| Agent       | Scope   | Path                               |
+| ----------- | ------- | ---------------------------------- |
+| Claude Code | global  | `~/.claude/skills/<name>/`         |
+| Claude Code | project | `<project>/.claude/skills/<name>/` |
+| Pi Agent    | global  | `~/.pi/agent/skills/<name>/`       |
+| Pi Agent    | project | `<project>/.pi/skills/<name>/`     |
 
 ### Install Mode
 
@@ -219,10 +219,10 @@ skills/<name>/  ──symlink──►  <target-dir>/<name>/
 
 This ensures auxiliary files (references/, etc.) are accessible alongside the skill file, and changes in the repo are automatically reflected at the install target.
 
-| Agent       | Target path                               |
-| ----------- | ----------------------------------------- |
-| Claude Code | `<scope>/.claude/skills/<name>/`          |
-| Pi Agent    | `<scope>/.pi/agent/skills/<name>/`        |
+| Agent       | Target path                        |
+| ----------- | ---------------------------------- |
+| Claude Code | `<scope>/.claude/skills/<name>/`   |
+| Pi Agent    | `<scope>/.pi/agent/skills/<name>/` |
 
 ---
 
