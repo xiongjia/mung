@@ -21,6 +21,22 @@ describe("claude-code helper", () => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
+  /**
+   * Create a mock skill directory with skill.md + optional extra files.
+   * Returns the path to skill.md (passed as sourcePath to installSkill).
+   */
+  function createMockSkill(skillName: string, extraFiles: string[] = []): string {
+    const skillDir = path.join(tmpDir, `src-${skillName}`);
+    fs.mkdirSync(skillDir, { recursive: true });
+    fs.writeFileSync(path.join(skillDir, "skill.md"), `# ${skillName}`);
+    for (const f of extraFiles) {
+      const filePath = path.join(skillDir, f);
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
+      fs.writeFileSync(filePath, "reference content");
+    }
+    return path.join(skillDir, "skill.md");
+  }
+
   describe("getSkillFileName", () => {
     it("returns <name>.md", () => {
       expect(getSkillFileName("code-review")).toBe("code-review.md");
@@ -46,31 +62,25 @@ describe("claude-code helper", () => {
   });
 
   describe("installSkill and uninstallSkill", () => {
-    it("installs via symlink by default", () => {
-      const source = path.join(tmpDir, "source.md");
-      fs.writeFileSync(source, "# test");
+    it("symlinks the whole skill directory", () => {
+      const sourcePath = createMockSkill("test-skill", ["references/bql.md"]);
 
-      const result = installSkill(source, "test-skill", tmpDir);
+      const result = installSkill(sourcePath, "test-skill", tmpDir);
       expect(result.installed).toBe(true);
       expect(result.method).toBe("symlink");
       expect(fs.existsSync(result.targetPath)).toBe(true);
       expect(fs.lstatSync(result.targetPath).isSymbolicLink()).toBe(true);
+      // Verify the whole directory structure is accessible
+      expect(fs.existsSync(path.join(result.targetPath, "skill.md"))).toBe(true);
+      expect(fs.existsSync(path.join(result.targetPath, "references", "bql.md"))).toBe(true);
     });
 
-    it("installs via copy when copy=true", () => {
-      const source = path.join(tmpDir, "source.md");
-      fs.writeFileSync(source, "# test");
+    it("uninstalls the whole directory", () => {
+      const sourcePath = createMockSkill("test-skill");
 
-      const result = installSkill(source, "test-skill", tmpDir, true);
-      expect(result.method).toBe("copy");
-      expect(fs.lstatSync(result.targetPath).isSymbolicLink()).toBe(false);
-    });
+      installSkill(sourcePath, "test-skill", tmpDir);
+      expect(fs.existsSync(path.join(tmpDir, "test-skill"))).toBe(true);
 
-    it("uninstalls a previously installed skill", () => {
-      const source = path.join(tmpDir, "source.md");
-      fs.writeFileSync(source, "# test");
-
-      installSkill(source, "test-skill", tmpDir, true);
       const unResult = uninstallSkill("test-skill", tmpDir);
       expect(unResult.removed).toBe(true);
       expect(fs.existsSync(unResult.targetPath)).toBe(false);
@@ -81,17 +91,15 @@ describe("claude-code helper", () => {
       expect(result.removed).toBe(false);
     });
 
-    it("installing overwrites existing target", () => {
-      const source1 = path.join(tmpDir, "source1.md");
-      const source2 = path.join(tmpDir, "source2.md");
-      fs.writeFileSync(source1, "# first");
-      fs.writeFileSync(source2, "# second");
+    it("replaces existing install on re-install", () => {
+      const sourcePath = createMockSkill("test-skill");
 
-      const r1 = installSkill(source1, "test-skill", tmpDir, true);
-      expect(fs.readFileSync(r1.targetPath, "utf-8")).toBe("# first");
+      const first = installSkill(sourcePath, "test-skill", tmpDir);
+      expect(fs.existsSync(first.targetPath)).toBe(true);
 
-      const r2 = installSkill(source2, "test-skill", tmpDir, true);
-      expect(fs.readFileSync(r2.targetPath, "utf-8")).toBe("# second");
+      const second = installSkill(sourcePath, "test-skill", tmpDir);
+      expect(second.installed).toBe(true);
+      expect(fs.existsSync(second.targetPath)).toBe(true);
     });
   });
 });

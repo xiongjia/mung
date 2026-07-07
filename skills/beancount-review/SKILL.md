@@ -62,12 +62,38 @@ Run `bean-check` on the main file. Parse the output and categorize:
 - **🔴 Errors**: unbalanced transactions, missing prices, commodity mismatches, invalid directives
 - **🟡 Warnings**: accounts without `open` directive, unused accounts, suspicious patterns
 
-Additionally, check for common issues:
+Additionally, run BQL-driven checks to detect common issues:
 
-- Duplicate transactions (same date, amount, and payee)
-- Accounts with negative balances that should not be negative (e.g., `Assets:Cash`)
-- Transactions with missing or zero amounts
-- Commodity imbalance within a transaction (`Assets:A 100 USD` but `Expenses:B 100 EUR`)
+```bash
+# Duplicate transactions (same date, payee, and amount)
+conda run -n <env> bean-query <main_file> "
+  SELECT date, payee, narration, account, SUM(position) AS amount, COUNT(*) AS cnt
+  GROUP BY date, payee, narration, account
+  HAVING COUNT(*) > 1
+  ORDER BY cnt DESC
+"
+
+# Asset accounts with negative balances (should not happen for cash/checking)
+conda run -n <env> bean-query <main_file> "
+  SELECT account, SUM(position) AS balance
+  FROM CLOSE
+  WHERE account ~ '^Assets:' AND NOT account ~ 'Liabilities|Loan'
+  GROUP BY 1 HAVING SUM(position) < 0
+"
+
+# Flagged transactions (pending review)
+conda run -n <env> bean-query <main_file> "
+  SELECT date, payee, narration, account, position
+  WHERE flag = '!' ORDER BY date
+"
+
+# Transactions with missing/zero amounts
+conda run -n <env> bean-query <main_file> "
+  SELECT date, payee, narration, position
+  WHERE position = 0
+  ORDER BY date
+"
+```
 
 ### Step 3 — Determine Analysis Period
 
@@ -91,21 +117,92 @@ Additionally, check for common issues:
 
 ### Step 4 — Income & Expense Analysis
 
-Query the beancount ledger using the date ranges determined in Step 3:
+Query the beancount ledger using `FROM OPEN ON / CLOSE ON` syntax, which cleanly isolates periods and handles opening balances correctly.
+
+For the target period `<start>` to `<end>` (where `<end>` = `<start>` + 1 period, i.e., exclusive end):
 
 ```bash
-# Current period income
+# Current period income — using OPEN ON / CLOSE ON period isolation
 conda run -n <env> bean-query <main_file> "
-  SELECT account, sum(position) AS total
-  WHERE account ~ 'Income:' AND date >= <start> AND date < <end>
+  SELECT account, SUM(position) AS total
+  FROM OPEN ON <start> CLOSE ON <end>
+  WHERE account ~ '^Income'
   GROUP BY account ORDER BY total DESC
 "
 
 # Current period expenses
 conda run -n <env> bean-query <main_file> "
-  SELECT account, sum(position) AS total
-  WHERE account ~ 'Expenses:' AND date >= <start> AND date < <end>
+  SELECT account, SUM(position) AS total
+  FROM OPEN ON <start> CLOSE ON <end>
+  WHERE account ~ '^Expenses'
   GROUP BY account ORDER BY total ASC
+"
+
+# Category aggregation (二级分类) — using ROOT(account, 2)
+conda run -n <env> bean-query <main_file> "
+  SELECT ROOT(account, 2) AS category, SUM(position) AS total
+  FROM OPEN ON <start> CLOSE ON <end>
+  WHERE account ~ '^Expenses'
+  GROUP BY 1 ORDER BY 2 DESC
+"
+
+# Income vs Expenses summary (single query)
+conda run -n <env> bean-query <main_file> "
+  SELECT ROOT(account, 1) AS type, SUM(position) AS total
+  FROM OPEN ON <start> CLOSE ON <end>
+  WHERE account ~ '^Income|^Expenses'
+  GROUP BY 1
+"
+```
+
+Run the same queries for the comparison period (using its own `<comp_start>` / `<comp_end>` dates):
+
+```bash
+# Comparison period — same structure, different dates
+conda run -n <env> bean-query <main_file> "
+  SELECT account, SUM(position) AS total
+  FROM OPEN ON <comp_start> CLOSE ON <comp_end>
+  WHERE account ~ '^Income'
+  GROUP BY account ORDER BY total DESC
+"
+```
+
+#### Step 4a — Balance Sheet Snapshot
+
+Take a point-in-time snapshot of assets and liabilities at the end of the target period:
+
+```bash
+conda run -n <env> bean-query <main_file> "
+  SELECT account, SUM(position) AS balance
+  FROM CLOSE ON <end> CLEAR
+  WHERE account ~ '^Assets|^Liabilities'
+  GROUP BY 1 ORDER BY account
+"
+```
+
+#### Step 4b — Investment Portfolio Overview
+
+If investment accounts exist, query holdings with cost basis and market value:
+
+```bash
+conda run -n <env> bean-query <main_file> "
+  SELECT account, UNITS(SUM(position)), COST(SUM(position)), VALUE(SUM(position))
+  FROM CLOSE ON <end>
+  WHERE account ~ '^Assets:Investments'
+  GROUP BY 1 ORDER BY account
+"
+```
+
+#### Step 4c — Subscription & Recurring Detection
+
+Detect potential subscriptions by finding payees with regular recurring charges:
+
+```bash
+conda run -n <env> bean-query <main_file> "
+  SELECT payee, COUNT(*) AS freq, COST(SUM(position)) AS total
+  WHERE account ~ '^Expenses' AND date >= <6-months-ago>
+  GROUP BY 1 HAVING COUNT(*) >= 3
+  ORDER BY 2 DESC
 "
 ```
 
@@ -117,7 +214,7 @@ Calculate key metrics:
 | Total Expenses         | Σ Expense accounts                     |
 | Net Savings            | Income − Expenses                      |
 | Savings Rate           | Net Savings ÷ Income × 100%            |
-| Top Expense Categories | Top 5 by absolute value                |
+| Top Expense Categories | Top 5 by ROOT(account, 2) aggregation  |
 | MoM / QoQ / YoY Change | (Current − Previous) ÷ Previous × 100% |
 
 Flag anomalies:
@@ -167,7 +264,7 @@ _No errors found._ ← if applicable
 | Net Savings    | ¥XXX    | ¥XXX     | +X%    |
 | Savings Rate   | XX%     | XX%      | —      |
 
-### Top Expense Categories
+### Top Expense Categories (二级分类)
 
 | Category | Amount | % of Total | vs Baseline |
 | -------- | ------ | ---------- | ----------- |
@@ -176,6 +273,15 @@ _No errors found._ ← if applicable
 
 | Source | Amount | % of Total |
 | ------ | ------ | ---------- |
+
+---
+
+## 📈 Investment Holdings
+
+| Account | Units | Cost Basis | Market Value | P&L |
+| ------- | ----- | ---------- | ------------ | --- |
+
+_No investment accounts found._ ← if applicable
 
 ---
 
@@ -202,8 +308,11 @@ Identify financial risks and early warning signs:
 - **Savings rate below 10%** for two consecutive periods → financial cushion insufficient
 - **Debt-to-income ratio** trend (if liability accounts exist) → > 40% is risky
 - **Income concentration risk**: single income source > 80% → lack of diversification
-- **Liquidity risk**: `Assets:Cash` balance < 3× monthly expenses → emergency fund low
+- **Liquidity risk**: liquid asset balance (cash + money market + Alipay/WeChat) < 3× monthly expenses → emergency fund low
 - **Expense growth outpaces income growth** for 3+ consecutive periods → unsustainable
+- **Negative asset balances**: asset accounts like checking/savings/digital wallet show negative balance → data entry error or overdraft
+- **Investment concentration**: single position > 50% of total portfolio value → lack of diversification
+- **Subscription creep**: total subscription spending > 5% of monthly income → review unused services
 
 ## 💡 Recommendations
 
@@ -215,8 +324,21 @@ Provide specific, actionable advice using concrete metrics from the report:
 4. **Tax optimization**: mention tax-advantaged accounts or deductions if relevant
 ```
 
+## Reference Files
+
+This skill ships with reference files in the `references/` directory:
+
+| File                     | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `references/syntax.md`   | Beancount directive syntax reference with CNY examples                             |
+| `references/bql.md`      | Full BQL query language documentation                                              |
+| `references/examples.md` | Common transaction patterns (CNY adaptation with Chinese banking/wallet scenarios) |
+
 ## Notes
 
 - Run `conda run` for EACH beancount command — the conda activation only lasts for one invocation
 - If `bean-query` returns no results, verify the date range and account regex patterns
+- `FROM OPEN ON <date> CLOSE ON <date>` syntax requires beancount >= 2.3.0; use `WHERE date >= X AND date < Y` as fallback for older versions
+- The `ROOT(account, n)` function helps with category-level aggregation — essential for "Essential vs Discretionary" classification
+- `VALUE(position)` requires price directives or `beancount.plugins.implicit_prices` plugin
 - Large ledgers may need `--no-cache` or may be slow; warn the user if it takes > 10 seconds

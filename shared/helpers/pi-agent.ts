@@ -29,42 +29,37 @@ export function getSkillFileName(skillName: string): string {
   return path.join(skillName, "SKILL.md");
 }
 
+/**
+ * Symlink the entire skill directory so auxiliary files (references/,
+ * etc.) are accessible alongside SKILL.md.
+ */
 export function installSkill(
   sourcePath: string,
   skillName: string,
   targetDir: string,
-  copy = false,
-): { installed: boolean; targetPath: string; method: "symlink" | "copy" } {
-  const targetPath = path.join(targetDir, getSkillFileName(skillName));
-  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  _copy?: boolean,
+): { installed: boolean; targetPath: string; method: "symlink" } {
+  const sourceDir = path.dirname(sourcePath);
+  const targetPath = path.join(targetDir, skillName);
 
-  // Remove existing if present (force: true handles ENOENT)
-  fs.rmSync(targetPath, { force: true });
+  fs.rmSync(targetPath, { force: true, recursive: true });
+  fs.mkdirSync(targetDir, { recursive: true });
+  fs.symlinkSync(sourceDir, targetPath);
 
-  if (copy) {
-    fs.copyFileSync(sourcePath, targetPath);
-    return { installed: true, targetPath, method: "copy" };
-  } else {
-    fs.symlinkSync(sourcePath, targetPath);
-    return { installed: true, targetPath, method: "symlink" };
-  }
+  return { installed: true, targetPath, method: "symlink" };
 }
 
+/**
+ * Remove an installed skill directory.
+ */
 export function uninstallSkill(
   skillName: string,
   targetDir: string,
 ): { removed: boolean; targetPath: string } {
-  const targetPath = path.join(targetDir, getSkillFileName(skillName));
+  const targetPath = path.join(targetDir, skillName);
   if (!fs.existsSync(targetPath)) {
     return { removed: false, targetPath };
   }
-  fs.rmSync(targetPath, { force: true });
-  // Clean up empty parent directory
-  const parentDir = path.dirname(targetPath);
-  try {
-    fs.rmdirSync(parentDir);
-  } catch {
-    /* not empty — fine */
-  }
+  fs.rmSync(targetPath, { force: true, recursive: true });
   return { removed: true, targetPath };
 }

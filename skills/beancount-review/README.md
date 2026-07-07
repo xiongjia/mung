@@ -1,6 +1,6 @@
 # Beancount Review Skill
 
-AI-powered beancount ledger review — detect accounting errors, analyze income/expenses, and get financial advice.
+AI-powered beancount ledger review — detect accounting errors, analyze income/expenses, review investments, and get financial advice.
 
 ## Files
 
@@ -8,12 +8,25 @@ AI-powered beancount ledger review — detect accounting errors, analyze income/
 | ------------- | -------------------------------------------------------------- |
 | `skill.md`    | Skill content installed to Claude Code / Pi Agent as a prompt. |
 | `README.md`   | This file — developer/user documentation.                      |
-| `scripts/`    | Optional helper scripts for beancount operations.              |
-| `references/` | Optional reference materials (cheatsheets, etc.).              |
+| `references/` | Reference materials installed alongside the skill:             |
+|               | • `syntax.md` — Beancount directive syntax reference           |
+|               | • `bql.md` — Full BQL query language documentation             |
+|               | • `examples.md` — Common transaction patterns (CNY edition)    |
+
+## Features
+
+- **Error Check** — `bean-check` + BQL-driven duplicate/negative-balance/flag detection
+- **Income & Expense Analysis** — Period isolation via `FROM OPEN ON / CLOSE ON`
+- **Category Aggregation** — `ROOT(account, n)` for spending structure breakdown
+- **Balance Sheet Snapshot** — Assets/Liabilities at period end via `CLOSE ON ... CLEAR`
+- **Investment Overview** — Holdings with cost basis and market value
+- **Subscription Detection** — Recurring payee frequency analysis
+- **Risk Alerts** — Savings rate, debt ratio, liquidity, concentration, subscription creep
+- **CNY Native** — Examples use Chinese banks, Alipay, WeChat, A-share ETFs
 
 ## Prerequisites
 
-- **conda** installed and a conda environment with `pymain` configured:
+- **conda** installed and a conda environment with `beancount` configured:
 
   ```bash
   conda create -n pymain python=3.12
@@ -22,6 +35,7 @@ AI-powered beancount ledger review — detect accounting errors, analyze income/
   ```
 
 - A beancount ledger repository (`.bean` files)
+- beancount >= 2.3.0 recommended (for `FROM OPEN ON / CLOSE ON` syntax)
 
 ## Quick Start
 
@@ -41,7 +55,7 @@ Create `.beancount-config` in your ledger project root:
 ```json
 {
   "main_file": "main.bean",
-  "conda_env": "beancount"
+  "conda_env": "pymain"
 }
 ```
 
@@ -89,12 +103,18 @@ No errors found.
 
 ## 📊 Financial Analysis
 
-| Metric | Current | Previous | Change |
-|--------|---------|----------|--------|
-| Total Income | ¥35,000 | ¥32,000 | +9.4% |
-| Total Expenses | ¥22,500 | ¥20,000 | +12.5% |
-| Net Savings | ¥12,500 | ¥12,000 | +4.2% |
-| Savings Rate | 35.7% | 37.5% | −1.8pp |
+| Metric         | Current  | Previous  | Change  |
+| -------------- | -------- | --------- | ------- |
+| Total Income   | ¥35,000  | ¥32,000   | +9.4%   |
+| Total Expenses | ¥22,500  | ¥20,000   | +12.5%  |
+| Net Savings    | ¥12,500  | ¥12,000   | +4.2%   |
+| Savings Rate   | 35.7%    | 37.5%     | −1.8pp  |
+
+## 📈 Investment Holdings
+
+| Account | Units | Cost Basis | Market Value | P&L |
+| ------- | ----- | ---------- | ------------ | --- |
+| ...     | ...   | ...        | ...          | ... |
 
 ## ⚠️ Anomalies
 - **Expenses:Dining**: +35% vs baseline — consider review
@@ -107,10 +127,11 @@ No errors found.
 
 ## Troubleshooting
 
-| Problem                         | Solution                                         |
-| ------------------------------- | ------------------------------------------------ |
-| `conda: command not found`      | Install conda or use `uv tool install beancount` |
-| `bean-check: command not found` | `conda activate <env> && pip install beancount`  |
-| `No .bean files found`          | Run from ledger directory or use `--file`        |
-| `bean-query returns empty`      | Check account name patterns match your ledger    |
-| `conda run` slow to start       | Normal; conda activation takes ~1s per command   |
+| Problem                         | Solution                                                                             |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| `conda: command not found`      | Install conda or use `uv tool install beancount`                                     |
+| `bean-check: command not found` | `conda activate <env> && pip install beancount`                                      |
+| `No .bean files found`          | Run from ledger directory or use `--file`                                            |
+| `bean-query returns empty`      | Check account name patterns match your ledger                                        |
+| `conda run` slow to start       | Normal; conda activation takes ~1s per command                                       |
+| `FROM OPEN ON` syntax error     | Upgrade beancount to >= 2.3.0, or use `WHERE date >= ... AND date < ...` as fallback |

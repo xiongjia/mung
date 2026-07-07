@@ -20,41 +20,36 @@ export function getSkillFileName(skillName: string): string {
 }
 
 /**
- * Install a skill markdown file to the target directory.
- * Default: symlink. Pass copy=true to copy instead.
+ * Symlink the entire skill directory so auxiliary files (references/,
+ * etc.) are available alongside skill.md.
  */
 export function installSkill(
   sourcePath: string,
   skillName: string,
   targetDir: string,
-  copy = false,
-): { installed: boolean; targetPath: string; method: "symlink" | "copy" } {
+  _copy?: boolean,
+): { installed: boolean; targetPath: string; method: "symlink" } {
+  const sourceDir = path.dirname(sourcePath);
+  const targetPath = path.join(targetDir, skillName);
+
+  fs.rmSync(targetPath, { force: true, recursive: true });
   fs.mkdirSync(targetDir, { recursive: true });
-  const targetPath = path.join(targetDir, getSkillFileName(skillName));
+  fs.symlinkSync(sourceDir, targetPath);
 
-  // Remove existing if present (force: true handles ENOENT)
-  fs.rmSync(targetPath, { force: true });
-
-  if (copy) {
-    fs.copyFileSync(sourcePath, targetPath);
-    return { installed: true, targetPath, method: "copy" };
-  } else {
-    fs.symlinkSync(sourcePath, targetPath);
-    return { installed: true, targetPath, method: "symlink" };
-  }
+  return { installed: true, targetPath, method: "symlink" };
 }
 
 /**
- * Remove an installed skill from the target directory.
+ * Remove an installed skill directory.
  */
 export function uninstallSkill(
   skillName: string,
   targetDir: string,
 ): { removed: boolean; targetPath: string } {
-  const targetPath = path.join(targetDir, getSkillFileName(skillName));
+  const targetPath = path.join(targetDir, skillName);
   if (!fs.existsSync(targetPath)) {
     return { removed: false, targetPath };
   }
-  fs.rmSync(targetPath, { force: true });
+  fs.rmSync(targetPath, { force: true, recursive: true });
   return { removed: true, targetPath };
 }

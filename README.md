@@ -69,17 +69,17 @@ mung/
 
 ## Skills
 
-| Skill                                                 | Targets               | Description                                                                                               |
-| ----------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
-| [code-review](skills/code-review/README.md)           | Claude Code, Pi Agent | Strict code review on all changes (staged, unstaged, and unpushed commits) — correctness, security, naming, and project conventions |
-| [beancount-review](skills/beancount-review/README.md) | Claude Code, Pi Agent | Beancount ledger review — detect errors, analyze income/expenses by period, and generate advisory reports |
+| Skill                                                 | Targets               |
+| ----------------------------------------------------- | --------------------- |
+| [code-review](skills/code-review/README.md)           | Claude Code, Pi Agent |
+| [beancount-review](skills/beancount-review/README.md) | Claude Code, Pi Agent |
 
 ## Install Targets
 
-| Agent       | Global                               | Project                                |
-| ----------- | ------------------------------------ | -------------------------------------- |
-| Claude Code | `~/.claude/skills/<name>.md`         | `<project>/.claude/skills/<name>.md`   |
-| Pi Agent    | `~/.pi/agent/skills/<name>/SKILL.md` | `<project>/.pi/skills/<name>/SKILL.md` |
+| Agent       | Global                       | Project                            |
+| ----------- | ---------------------------- | ---------------------------------- |
+| Claude Code | `~/.claude/skills/<name>/`   | `<project>/.claude/skills/<name>/` |
+| Pi Agent    | `~/.pi/agent/skills/<name>/` | `<project>/.pi/skills/<name>/`     |
 
 ## Adding a New Skill
 
