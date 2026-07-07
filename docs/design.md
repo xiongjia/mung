@@ -204,17 +204,25 @@ npx tsx shared/uninstall.ts --skill <name> \
 
 | Agent       | Scope   | Path                                   |
 | ----------- | ------- | -------------------------------------- |
-| Claude Code | global  | `~/.claude/skills/<name>.md`           |
-| Claude Code | project | `<project>/.claude/skills/<name>.md`   |
-| Pi Agent    | global  | `~/.pi/agent/skills/<name>/SKILL.md`   |
-| Pi Agent    | project | `<project>/.pi/skills/<name>/SKILL.md` |
+| Claude Code | global  | `~/.claude/skills/<name>/`             |
+| Claude Code | project | `<project>/.claude/skills/<name>/`     |
+| Pi Agent    | global  | `~/.pi/agent/skills/<name>/`           |
+| Pi Agent    | project | `<project>/.pi/skills/<name>/`         |
 
-### Symlink vs Copy
+### Install Mode
 
-| Mode    | Default | Flag     | Behavior                                                     |
-| ------- | ------- | -------- | ------------------------------------------------------------ |
-| Symlink | ✅      | —        | `ln -s` from repo source → target; auto-updates on repo pull |
-| Copy    |         | `--copy` | Copies file; edits to installed skill don't affect source    |
+Both agents symlink the entire skill directory:
+
+```
+skills/<name>/  ──symlink──►  <target-dir>/<name>/
+```
+
+This ensures auxiliary files (references/, etc.) are accessible alongside the skill file, and changes in the repo are automatically reflected at the install target.
+
+| Agent       | Target path                               |
+| ----------- | ----------------------------------------- |
+| Claude Code | `<scope>/.claude/skills/<name>/`          |
+| Pi Agent    | `<scope>/.pi/agent/skills/<name>/`        |
 
 ---
 
@@ -282,6 +290,6 @@ GitHub Actions ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) runs 
 ## Open Questions
 
 - [x] Pi Agent skill directory paths and file format (`.pi/skills/<name>/SKILL.md` project, `~/.pi/agent/skills/<name>/SKILL.md` global)
-- [ ] Pi Agent `SKILL.md` frontmatter compliance (name + description fields)
+- [x] Pi Agent `SKILL.md` frontmatter compliance (name + description fields)
 - [ ] Skill version tracking at install target (for update detection)
 - [ ] Skill dependency management

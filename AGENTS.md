@@ -15,7 +15,7 @@
 
 ### Skill Directory Structure
 
-Each skill in `skills/<name>/` must have a `skill.md`:
+Each skill in `skills/<name>/` must have a `SKILL.md`:
 
 ```markdown
 ---
@@ -32,6 +32,7 @@ targets: [claude-code, pi-agent]
 
 - Directory names: kebab-case (e.g., `code-review`)
 - Skill names: match directory name
+- Skill file name: `SKILL.md` (uppercase) — Pi Agent expects `SKILL.md`; Claude Code reads the file as `<name>.md` inside the symlinked directory
 - Use English for all skills and code; locale-specific skills may use other languages
 
 ## Script Conventions
