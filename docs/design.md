@@ -8,7 +8,8 @@
 
 - Single source of truth for personal skills
 - Install skills globally or per-project with one command
-- Symlink-based distribution so updating the repo updates all installed skills
+- Copy-based distribution (default) with VERSION file for version tracking
+- Symlink-based distribution (opt-in) for live source linking
 - Agent-agnostic: support Claude Code and Pi Agent through helper modules
 
 ### Non-Goals
@@ -185,7 +186,7 @@ npx tsx shared/install.ts --skill <name> \
   --target claude-code|pi-agent \
   --scope global|project \
   [--project-path <path>] \
-  [--copy]
+  [--symlink]
 
 # Install all skills
 npx tsx shared/install.ts --all \
@@ -209,20 +210,44 @@ npx tsx shared/uninstall.ts --skill <name> \
 | Pi Agent    | global  | `~/.pi/agent/skills/<name>/`       |
 | Pi Agent    | project | `<project>/.pi/skills/<name>/`     |
 
-### Install Mode
+**Install Modes**
 
-Both agents symlink the entire skill directory:
+Installation has two modes, controlled by a CLI flag:
+
+| Mode        | Flag        | Default | Behavior                                                                    |
+| ----------- | ----------- | ------- | --------------------------------------------------------------------------- |
+| **copy**    | _(no flag)_ | ✅ Yes  | Copies the skill directory and writes a `VERSION` file with git commit hash |
+| **symlink** | `--symlink` | No      | Creates a symlink to the source (live link, no `VERSION` file)              |
+
+**Copy mode (default)**
 
 ```
-skills/<name>/  ──symlink──►  <target-dir>/<name>/
+skills/<name>/  ──copy──►  <target-dir>/<name>/
+                            └── VERSION (git commit hash)
 ```
 
-This ensures auxiliary files (references/, etc.) are accessible alongside the skill file, and changes in the repo are automatically reflected at the install target.
+The entire skill directory is copied recursively via `fs.cpSync()`. This produces a fully independent snapshot — changes to the source repo do not affect installed skills.
+
+After the copy, a `VERSION` file is written containing the git commit hash (from `git rev-parse HEAD`). This enables:
+
+- Verifying which version of a skill is deployed
+- Detecting outdated installations
+- Audit trail for installed skills
 
 | Agent       | Target path                        |
 | ----------- | ---------------------------------- |
 | Claude Code | `<scope>/.claude/skills/<name>/`   |
 | Pi Agent    | `<scope>/.pi/agent/skills/<name>/` |
+
+**Symlink mode (`--symlink`)**
+
+```
+skills/<name>/  ──symlink──►  <target-dir>/<name>/
+```
+
+Creates a live symlink to the source directory. Changes to the repo are immediately reflected at the install target. No `VERSION` file is written since the source is the canonical reference.
+
+This mode is useful during development to test edits without reinstalling.
 
 ---
 
@@ -235,10 +260,24 @@ interface SkillHelper {
   getGlobalSkillsDir(): string;
   getProjectSkillsDir(projectPath: string): string;
   getSkillFileName(skillName: string): string; // validates via validateSkillName()
-  installSkill(sourcePath, skillName, targetDir, copy?): InstallResult;
+  installSkill(sourcePath, skillName, targetDir, symlink?): InstallResult;
   uninstallSkill(skillName, targetDir): UninstallResult;
 }
 ```
+
+`installSkill` returns:
+
+```typescript
+{
+  installed: boolean;
+  targetPath: string;
+  method: "symlink" | "copy";
+}
+```
+
+- `symlink` is `undefined`/`false` → copy mode (default)
+- `symlink` is `true` → symlink mode
+- `method` in the result reports which mode was used
 
 New agent support requires: (1) implementing this interface, (2) calling `registerHelper()` in `install.ts` and `uninstall.ts`.
 
@@ -291,5 +330,5 @@ GitHub Actions ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) runs 
 
 - [x] Pi Agent skill directory paths and file format (`.pi/skills/<name>/SKILL.md` project, `~/.pi/agent/skills/<name>/SKILL.md` global)
 - [x] Pi Agent `SKILL.md` frontmatter compliance (name + description fields)
-- [ ] Skill version tracking at install target (for update detection)
+- [x] Skill version tracking at install target — VERSION file with git commit hash (copy mode)
 - [ ] Skill dependency management
