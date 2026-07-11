@@ -1,1 +1,0 @@
-/Users/xiongjia/Work/self/mung/skills/code-review/skill.md

@@ -43,6 +43,15 @@ targets: [claude-code, pi-agent]
 - Agent-specific logic lives in `shared/helpers/<agent-name>.ts`
 - Scripts read from `skills/registry.json` — do NOT scan directories
 
+## Install Modes
+
+Installation has two modes, controlled by a CLI flag:
+
+| Mode        | Flag        | Default | Behavior                                                             |
+| ----------- | ----------- | ------- | -------------------------------------------------------------------- |
+| **copy**    | _(no flag)_ | ✅ Yes  | Copies the skill directory and writes `VERSION` with git commit hash |
+| **symlink** | `--symlink` | No      | Creates a symlink to the source (live link, no `VERSION` file)       |
+
 ## Git Conventions
 
 ### Commit Message Format
@@ -90,10 +99,16 @@ fix(code-review): correct naming issues detection regex
 npx tsx shared/list.ts
 ```
 
-### Install a skill globally for Claude Code
+### Install a skill globally for Claude Code (copy mode, default)
 
 ```bash
 npx tsx shared/install.ts --skill code-review --target claude-code --scope global
+```
+
+### Install a skill with a symlink (live link to source)
+
+```bash
+npx tsx shared/install.ts --skill code-review --target claude-code --scope global --symlink
 ```
 
 ### Uninstall a skill

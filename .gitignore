@@ -27,3 +27,7 @@ Thumbs.db
 .claude/settings.local.json
 .codegraph/
 *.draft.md
+
+# Project-local skill install artifacts
+.claude/skills/
+.pi/skills/
