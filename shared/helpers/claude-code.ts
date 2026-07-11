@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as os from "node:os";
 import { validateSkillName } from "../types.ts";
+import { writeVersionFile } from "./version.ts";
 
 const SKILLS_DIR_NAME = ".claude";
 const SKILLS_SUBDIR = "skills";
@@ -20,23 +21,34 @@ export function getSkillFileName(skillName: string): string {
 }
 
 /**
- * Symlink the entire skill directory so auxiliary files (references/,
- * etc.) are available alongside skill.md.
+ * Install a skill.
+ *
+ * Default mode is **copy**: the entire skill directory is copied to the target and
+ * a VERSION file with the git commit hash is written.
+ *
+ * Pass `symlink: true` to create a symlink instead (no VERSION file).
  */
 export function installSkill(
   sourcePath: string,
   skillName: string,
   targetDir: string,
-  _copy?: boolean,
-): { installed: boolean; targetPath: string; method: "symlink" } {
+  symlink?: boolean,
+): { installed: boolean; targetPath: string; method: "symlink" | "copy" } {
   const sourceDir = path.dirname(sourcePath);
   const targetPath = path.join(targetDir, skillName);
 
   fs.rmSync(targetPath, { force: true, recursive: true });
   fs.mkdirSync(targetDir, { recursive: true });
-  fs.symlinkSync(sourceDir, targetPath);
 
-  return { installed: true, targetPath, method: "symlink" };
+  if (symlink) {
+    fs.symlinkSync(sourceDir, targetPath);
+    return { installed: true, targetPath, method: "symlink" };
+  }
+
+  // Copy mode (default)
+  fs.cpSync(sourceDir, targetPath, { recursive: true });
+  writeVersionFile(targetPath);
+  return { installed: true, targetPath, method: "copy" };
 }
 
 /**

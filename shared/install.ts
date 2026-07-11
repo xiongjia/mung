@@ -22,7 +22,8 @@ interface Args {
   target: AgentTarget;
   scope: "global" | "project";
   projectPath?: string;
-  copy: boolean;
+  /** Use symlink instead of copy (default is copy). */
+  symlink: boolean;
 }
 
 function parseArgs(raw: string[]): Args {
@@ -30,7 +31,7 @@ function parseArgs(raw: string[]): Args {
   const args: Args = {
     ...base,
     list: false,
-    copy: false,
+    symlink: false,
   };
 
   for (let i = 0; i < raw.length; i++) {
@@ -38,8 +39,8 @@ function parseArgs(raw: string[]): Args {
       case "--list":
         args.list = true;
         break;
-      case "--copy":
-        args.copy = true;
+      case "--symlink":
+        args.symlink = true;
         break;
     }
   }
@@ -115,7 +116,7 @@ function cmdInstall(args: Args): void {
     }
 
     try {
-      const result = helper.installSkill(sourcePath, skill.name, targetDir, args.copy);
+      const result = helper.installSkill(sourcePath, skill.name, targetDir, args.symlink);
       console.log(`Installed ${skill.name} → ${result.targetPath} (${result.method})`);
     } catch (e) {
       console.error(`Error: failed to install ${skill.name}: ${(e as Error).message}`);
@@ -141,11 +142,15 @@ if (args.list) {
   console.log("Usage:");
   console.log("  npx tsx shared/install.ts --list");
   console.log(
-    "  npx tsx shared/install.ts --skill <name> [--target claude-code|pi-agent] [--scope global|project] [--project-path <path>] [--copy]",
+    "  npx tsx shared/install.ts --skill <name> [--target claude-code|pi-agent] [--scope global|project] [--project-path <path>] [--symlink]",
   );
   console.log(
-    "  npx tsx shared/install.ts --all [--target claude-code|pi-agent] [--scope global|project] [--project-path <path>] [--copy]",
+    "  npx tsx shared/install.ts --all [--target claude-code|pi-agent] [--scope global|project] [--project-path <path>] [--symlink]",
   );
+  console.log("");
+  console.log("Modes:");
+  console.log("  (default) Copy the skill directory with a VERSION file (git commit hash).");
+  console.log("  --symlink Create a symlink instead (no VERSION file, live link to source).");
   console.log("");
   console.log("Uninstall:");
   console.log(
