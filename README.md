@@ -11,8 +11,11 @@ pnpm install
 # List available skills
 npx tsx shared/list.ts
 
-# Install code-review skill globally for Claude Code
+# Install code-review skill globally for Claude Code (copy mode, default)
 npx tsx shared/install.ts --skill code-review --target claude-code --scope global
+
+# Install with a symlink (live link to source)
+npx tsx shared/install.ts --skill code-review --target claude-code --scope global --symlink
 
 # Uninstall
 npx tsx shared/uninstall.ts --skill code-review --target claude-code --scope global
@@ -23,6 +26,17 @@ npx tsx shared/install.ts --all --target claude-code --scope project --project-p
 # Install code-review to current project
 npx tsx shared/install.ts --skill code-review --target claude-code --scope project --project-path .
 ```
+
+## Install Modes
+
+Installation supports two modes, controlled by a CLI flag:
+
+| Mode        | Flag        | Default | Behavior                                                                    |
+| ----------- | ----------- | ------- | --------------------------------------------------------------------------- |
+| **copy**    | _(no flag)_ | ✅ Yes  | Copies the skill directory and writes a `VERSION` file with git commit hash |
+| **symlink** | `--symlink` | No      | Creates a symlink to the source (live link, no `VERSION` file)              |
+
+> The `VERSION` file records the exact git commit hash at install time, making it easy to verify which version of a skill is deployed.
 
 ## Commands
 
